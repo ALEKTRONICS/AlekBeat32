@@ -13,6 +13,7 @@ The system synthesizes percussion on demand and passively blends the audio with 
 •​Single Power System: Powered by a standard 9V battery utilizing voltage step-down regulation to supply both the ESP32 microcontroller board and the active guitar pickup system simultaneously.
 
 ​Hardware Architecture
+
 •​Microcontroller: ESP32 Development Module (audio synthesis and trigger processing)
 
 •​Audio Mixing: 2-Channel Passive Audio Mixer Board (2-Way Input, 1-Way Mixed Output)
