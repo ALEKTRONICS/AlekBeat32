@@ -1,4 +1,4 @@
-# AlekblBeat-ESP32
+# AlekBeat-ESP32
 ​AlekBeat-ESP32 is an embedded audio hardware project designed to install directly inside an acoustic guitar body, adding real-time, built-in percussive elements (kick drum and snare) to standard play. 
 The system synthesizes percussion on demand and passively blends the audio with the guitar's native pickup signal, producing a rich, multi-layered performance through a single standard instrument output jack.
 
