@@ -1,0 +1,13 @@
+{
+  "name": "My Custom Firmware",
+  "version": "1.0.0",
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "merged-firmware.bin", "offset": 0 },
+        { "path": "littleFS.bin", "offset": 2686976 }
+      ]
+    }
+  ]
+}
