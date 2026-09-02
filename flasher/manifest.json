@@ -5,7 +5,7 @@
     {
       "chipFamily": "ESP32",
       "parts": [
-        { "path": "merged-firmware.bin", "offset": 0 },
+        { "path": "merge-firmware.bin", "offset": 0 },
         { "path": "littleFS.bin", "offset": 2686976 }
       ]
     }
