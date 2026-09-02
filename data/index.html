@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALEKTRONIC DRUM</title>
+    <style>
+      :root {
+        --bg: #111827;
+        --panel: #1f2937;
+        --panel-2: #0f172a;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #22c55e;
+        --accent-2: #38bdf8;
+        --warn: #f59e0b;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: linear-gradient(135deg, var(--bg), var(--panel-2));
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      .panel {
+        width: min(92vw, 700px);
+        background: rgba(31, 41, 55, 0.95);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      }
+
+      h1 {
+        margin: 0 0 18px;
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        text-align: center;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .drum {
+        background: rgba(17, 24, 39, 0.8);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 18px 12px;
+        text-align: center;
+      }
+
+      .drum h2 {
+        font-size: 1.2rem;
+        margin: 0 0 12px;
+        text-transform: capitalize;
+      }
+
+      button {
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 14px;
+        background: var(--accent);
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      button:hover { filter: brightness(1.08); }
+
+      .tone {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .tone-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent-2);
+      }
+
+      .label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .switch-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 12px 0 18px;
+        padding: 10px 12px;
+        background: rgba(17, 24, 39, 0.8);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 10px;
+      }
+
+      .switch-row label {
+        color: var(--text);
+        font-weight: bold;
+      }
+
+      input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>ALEKTRONIC DRUM</h1>
+
+      <div class="switch-row">
+        <label for="snareMode">Snare mode</label>
+        <input id="snareMode" type="checkbox" checked />
+        <span id="snareModeText">ON</span>
+      </div>
+
+      <div class="grid">
+        <div class="drum">
+          <h2>Kick</h2>
+          <input id="kickVol" type="range" min="0" max="100" value="80" />
+          <button type="button" data-name="kick">Test Kick</button>
+        </div>
+
+        <div class="drum">
+          <h2>Snare</h2>
+          <input id="snareVol" type="range" min="0" max="100" value="80" />
+          <button type="button" data-name="snare">Test Snare</button>
+        </div>
+      </div>
+
+      <div class="tone">
+        <label class="label" for="freq">Tone frequency: <span id="freqValue">440</span> Hz</label>
+        <input id="freq" type="range" min="100" max="2000" step="10" value="440" />
+
+        <label class="label" for="dur">Duration: <span id="durValue">500</span> ms</label>
+        <input id="dur" type="range" min="100" max="2000" step="50" value="500" />
+
+        <label class="label" for="toneVol">Tone volume: <span id="toneVolValue">80</span>%</label>
+        <input id="toneVol" type="range" min="0" max="100" value="80" />
+
+        <div class="tone-row">
+          <button type="button" id="playTone">Play Tone</button>
+        </div>
+      </div>
+
+    </div>
+
+    <script>
+      const snareModeEl = document.getElementById('snareMode');
+      const snareModeText = document.getElementById('snareModeText');
+      const ws = new WebSocket('ws://' + location.hostname + ':81');
+
+      function sendMessage(msg) {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(msg));
+        }
+      }
+
+      function bindVolume(name, sliderId) {
+        const slider = document.getElementById(sliderId);
+        slider.addEventListener('input', () => {
+          const value = Number(slider.value);
+          sendMessage({ type: 'volume', name, value });
+        });
+      }
+
+      document.querySelectorAll('button[data-name]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const name = btn.dataset.name;
+          sendMessage({ type: 'test', name });
+        });
+      });
+
+      const freq = document.getElementById('freq');
+      const dur = document.getElementById('dur');
+      const toneVol = document.getElementById('toneVol');
+
+      function updateToneLabels() {
+        document.getElementById('freqValue').textContent = freq.value;
+        document.getElementById('durValue').textContent = dur.value;
+        document.getElementById('toneVolValue').textContent = toneVol.value;
+      }
+
+      [freq, dur, toneVol].forEach((el) => el.addEventListener('input', updateToneLabels));
+
+      document.getElementById('playTone').addEventListener('click', () => {
+        sendMessage({
+          type: 'tone',
+          freq: Number(freq.value),
+          dur: Number(dur.value),
+          vol: Number(toneVol.value)
+        });
+      });
+
+      function updateSnareMode() {
+        const enabled = snareModeEl.checked;
+        snareModeText.textContent = enabled ? 'ON' : 'OFF';
+        sendMessage({ type: 'snare_mode', value: enabled });
+      }
+
+      snareModeEl.addEventListener('change', updateSnareMode);
+      bindVolume('kick', 'kickVol');
+      bindVolume('snare', 'snareVol');
+      updateSnareMode();
+    </script>
+  </body>
+</html>
