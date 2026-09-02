@@ -1,83 +1,62 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DrumProject</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>DrumProject — Flash Firmware</title>
     <style>
-      :root {
-        --bg: #0b1020;
-        --panel: #121b2b;
-        --panel-2: #1a263d;
-        --text: #edf6ff;
-        --muted: #9bb4d1;
-        --accent: #5cc8ff;
-        --accent-2: #6ee7b7;
-        --danger: #ff7b7b;
-      }
-
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(135deg, var(--bg), #111827);
-        color: var(--text);
-        font-family: Arial, Helvetica, sans-serif;
-      }
-
-      .card {
-        width: min(860px, calc(100vw - 32px));
-        background: rgba(18, 27, 43, 0.95);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 18px;
-        box-shadow: 0 24px 60px rgba(0,0,0,0.35);
-        padding: 28px 24px 20px;
-      }
-
-      h1 {
-        margin: 0 0 10px;
-        font-size: clamp(1.8rem, 3vw, 2.6rem);
-      }
-
-      p {
-        color: var(--muted);
-        line-height: 1.6;
-        margin: 0 0 18px;
-      }
-
-      .warning {
-        margin-top: 16px;
-        padding: 12px 14px;
-        background: rgba(255, 123, 123, 0.08);
-        border-left: 4px solid var(--danger);
-        color: #ffdede;
-        border-radius: 8px;
-      }
-
-      esp-web-install-button {
-        display: block;
-        margin-top: 20px;
-      }
+      :root{--bg:#071228;--card:#071830;--muted:#9bb4d1;--accent:#5cc8ff;--glass:rgba(255,255,255,0.04)}
+      *{box-sizing:border-box}
+      html,body{height:100%}
+      body{margin:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--bg),#021020);font-family:Inter,Segoe UI,Arial,sans-serif;color:#eaf6ff}
+      .container{width:min(920px,calc(100vw-32px));padding:28px;border-radius:14px;background:linear-gradient(180deg,var(--card),rgba(10,20,34,0.9));box-shadow:0 20px 40px rgba(0,0,0,0.5);border:1px solid var(--glass)}
+      .header{display:flex;gap:18px;align-items:center}
+      .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#6ee7b7);display:grid;place-items:center;color:#04202a;font-weight:700;font-size:20px}
+      h1{margin:0;font-size:1.6rem}
+      p{color:var(--muted);margin:8px 0 18px;line-height:1.5}
+      .actions{display:flex;gap:12px;align-items:center}
+      esp-web-install-button{display:inline-block}
+      button[slot="activate"],button[slot="loading"],button[slot="success"],button[slot="error"]{appearance:none;border:0;padding:10px 16px;border-radius:10px;font-weight:600;cursor:pointer}
+      button[slot="activate"]{background:linear-gradient(90deg,var(--accent),#6ee7b7);color:#04202a}
+      button[slot="loading"]{background:#0b1624;color:var(--muted)}
+      button[slot="success"]{background:#0f5e3f;color:#e6fff3}
+      button[slot="error"]{background:#7b1b1b;color:#ffdede}
+      .note{margin-top:16px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.02);color:var(--muted);font-size:0.95rem}
+      footer{margin-top:18px;color:var(--muted);font-size:0.85rem}
+      @media (max-width:520px){.header{flex-direction:column;align-items:flex-start}.actions{width:100%}}
     </style>
   </head>
   <body>
-    <div class="card">
-      <h1>DrumProject</h1>
-      <p>Connect your ESP32 board over USB, then click the button below to flash the firmware and LittleFS data.</p>
-
-      <esp-web-install-button manifest="manifest.json">
-        <button slot="activate">Connect and flash</button>
-        <button slot="loading">Flashing…</button>
-        <button slot="success">Flash complete</button>
-        <button slot="error">Flash failed</button>
-      </esp-web-install-button>
-
-      <div class="warning">
-        Make sure your board is in the bootloader/flash mode and the browser has permission to access the COM port.
+    <main class="container">
+      <div class="header">
+        <div class="logo">DP</div>
+        <div>
+          <h1>DrumProject — Flash your ESP32</h1>
+          <p>Use the button to connect to your ESP32 and flash the latest firmware and filesystem image (LittleFS). Works in Chromium-based browsers with WebUSB/WebSerial support.</p>
+        </div>
       </div>
-    </div>
+
+      <div class="actions" style="margin-top:18px">
+        <esp-web-install-button manifest="manifest.json">
+          <button slot="activate">Connect &amp; Flash</button>
+          <button slot="loading">Flashing…</button>
+          <button slot="success">Done ✓</button>
+          <button slot="error">Failed ✕</button>
+        </esp-web-install-button>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <a href="manifest.json" style="color:var(--muted);text-decoration:underline">View manifest</a>
+          <a href="/" style="color:var(--muted);text-decoration:underline">Back to project</a>
+        </div>
+      </div>
+
+      <div class="note">
+        Tip: Put your board in bootloader/flash mode, allow the browser to access the port, and avoid other programs holding the COM port open.
+      </div>
+
+      <footer>
+        Need help? Open the browser console for messages while flashing.
+      </footer>
+    </main>
 
     <script type="module" src="https://espressif.github.io/esp-web-flasher/dist/web/install-button.js?module"></script>
   </body>
